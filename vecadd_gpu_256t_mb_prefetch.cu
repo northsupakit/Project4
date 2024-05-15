@@ -13,14 +13,17 @@ void add(int n, float *x, float *y)
 
 
 int main(void) {
-
-  int deviceID=0; 
   int N = 1<<20;
   float *x, *y;
 
   // Allocate Unified Memory – accessible from CPU or GPU
-    cudaMemPrefetchAsync((void *)x, N*sizeof(float), deviceID);
-    cudaMemPrefetchAsync((void *)y, N*sizeof(float), deviceID);
+  cudaMallocManaged(&x, N*sizeof(float));
+  cudaMallocManaged(&y, N*sizeof(float));
+
+  // Prefetch memory to GPU
+  int deviceID = 0;
+  cudaMemPrefetchAsync((void *)x, N*sizeof(float), deviceID);
+  cudaMemPrefetchAsync((void *)y, N*sizeof(float), deviceID);
 
   // initialize x and y arrays on the host
   for (int i = 0; i < N; i++) {
